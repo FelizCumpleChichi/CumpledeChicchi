@@ -27,20 +27,20 @@
   }
   function preloadNext() {const next=chapters[position+1];if(!next)return;[next.cover,...(next.photos||[]).slice(0,2)].filter(Boolean).forEach(src=>{const i=new Image();i.src=src;});}
   function buttons(back, forward, text) {return `<nav class="footer-nav" aria-label="Navegación de la historia"><button class="back-btn" data-go="${back}">← Volver</button><button class="next-btn" data-go="${forward}">${esc(text)} →</button></nav>`;}
-  function intro() {const i=data.intro;return `<main class="view landing"><div class="content"><div class="stamps" aria-hidden="true"><div class="stamp">✈️</div><div class="stamp">📸</div><div class="stamp">🧳</div></div><div class="eyebrow">${esc(i.eyebrow)}</div><h1>${esc(i.title)}</h1><p class="subtitle">${esc(i.subtitle)}</p><button class="pill-btn" data-go="0">Empezar nuestro viaje ↗</button><div class="micro">Nuestra historia · desde noviembre de 2024</div></div></main>`;}
+  function intro() {const i=data.intro;return `<main class="view landing"><div class="content"><div class="stamps" aria-hidden="true"><div class="stamp">✈️</div><div class="stamp">📸</div><div class="stamp">🧳</div></div><div class="eyebrow">${esc(i.eyebrow)}</div><h1>${esc(i.title)}</h1><p class="subtitle">${esc(i.subtitle)}</p><button class="pill-btn" data-go="0">Empezar nuestra historia →</button><div class="micro">Los mejores viajes siempre fueron juntos.</div></div></main>`;}
   function trip(ch, ix) {
     const c = ch.colors || ['#2b5868', '#c79b78'];
     const nextText = ['Seguimos sumando kilómetros', '¿Te acordás de este?', 'Vamos al próximo destino', 'Otro capítulo más', 'Seguimos viajando'][ix%5];
-    return `<main class="view trip album-trip portrait-trip" style="--c1:${esc(c[0])};--c2:${esc(c[1])}">
+    return `<main class="view trip album-trip portrait-trip${ix===0?' origin-trip':''}" style="--c1:${esc(c[0])};--c2:${esc(c[1])}">
       <header class="topbar"><div class="brand">✦ Nuestra historia</div><div class="counter">CAPÍTULO ${String(ix+1).padStart(2,'0')} / ${String(chapters.length).padStart(2,'0')}</div></header>
       <div class="track" role="progressbar" aria-label="Progreso de la historia" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round((ix+1)/chapters.length*100)}"><div class="fill" style="width:${(ix+1)/chapters.length*100}%"></div></div>
       <div class="album-layout">
-        <section class="album-heading"><div class="chapter-label">${esc(ch.date)} · UN NUEVO DESTINO</div><h2>${esc(ch.destination)}</h2><div class="kicker">${esc(ch.kicker||'Una nueva aventura')}</div>${ch.places?.length?`<div class="places">${ch.places.map(place=>`<span>✦ ${esc(place)}</span>`).join('')}</div>`:''}<p class="quote">“${esc(ch.message||'Un viaje más para recordar.')}”</p></section>
+        <section class="album-heading"><div class="chapter-label">${esc(ch.date)} · ${ix===0?'DONDE EMPEZÓ TODO':ix===9?'NUESTRO CLÁSICO ANUAL':'UN NUEVO DESTINO'}</div>${ix===0?'<div class="origin-mark">CAPÍTULO 01 · EL COMIENZO</div>':''}<h2>${esc(ch.destination)}</h2><div class="kicker">${esc(ch.kicker||'Una nueva aventura')}</div>${ch.places?.length?`<div class="places">${ch.places.map(place=>`<span>✦ ${esc(place)}</span>`).join('')}</div>`:''}<p class="quote">“${esc(ch.message||'Un viaje más para recordar.')}”</p></section>
         <section class="album-content" aria-label="Postal de ${esc(ch.destination)}">
           ${ch.cover?`<div class="postcard-frame"><img class="postcard-backdrop" src="${photoSrc(ch.cover)}" alt="" aria-hidden="true"><img class="postcard-image" src="${photoSrc(ch.cover)}" alt="Recuerdo del grupo en ${esc(ch.destination)}" loading="eager" decoding="async"></div>`:''}
         </section>
       </div>
-      ${buttons(ix-1,ix+1,ix===chapters.length-1?'Descubrir lo que viene':nextText)}
+      ${buttons(ix-1,ix+1,ix===0?'Y la historia siguió':ix===chapters.length-1?'Y todavía faltaba lo mejor':nextText)}
     </main>`;
   }
   // Una única pieza visual, tipo itinerario, con todos los destinos visibles a la vez.
@@ -102,8 +102,7 @@
       </div>
     </main>`;
   }
-  function teaser() {return `<main class="view fake-end"><div class="center"><div class="large-icon" aria-hidden="true">✦</div><div class="eyebrow">HASTA ACÁ, NUESTRA HISTORIA…</div><h2>Qué manera de recorrer kilómetros juntos, ¿no?</h2><p class="false-ending">Pero hay algo que todavía no te contamos…</p><button class="pill-btn gift-btn" data-go="${revealIndex}">🎁 Chichi, abrí tu regalo</button><div><button class="ghost-btn" style="margin-top:30px" data-go="${specialIndex}">← Volver</button></div></div></main>`;}
-
+  function teaser() {return `<main class="view fake-end"><div class="center"><div class="large-icon" aria-hidden="true">✦</div><div class="eyebrow">Y ESTA HISTORIA TODAVÍA NO TERMINA...</div><h2>Chichi, después de tantos viajes juntos, todavía nos queda uno por regalarte.</h2><p class="false-ending">Porque algunas historias merecen seguir sumando destinos.</p><button class="pill-btn gift-btn" data-go="${revealIndex}">Chichi, feliz cumple. Abrí tu regalo 🎁</button><div><button class="ghost-btn" style="margin-top:30px" data-go="${specialIndex}">← Volver</button></div></div></main>`;}
   function syncCoverFrames(scope = app) {
     scope.querySelectorAll('.postcard-image').forEach(img => {
       const apply = () => {
@@ -120,7 +119,28 @@
     });
   }
 
-  function reveal() {const f=data.finale;const confetti=motionOK?`<div class="confetti confetti-v10" aria-hidden="true">${Array.from({length:24},(_,n)=>`<i style="--left:${(n*41.37)%100}%;--col:${['#f5cd83','#fff7e4','#f3a17c','#6fd3bf'][n%4]};--dur:${5+(n%5)}s;--delay:${1.7+(n%8)*0.08}s;--rot:${n*19}deg"></i>`).join('')}</div>`:'';return `<main class="view reveal reveal-v10">${confetti}<article class="reveal-card reveal-card-v10"><div class="reveal-kicker eyebrow">EL PRÓXIMO CAPÍTULO YA TIENE DESTINO</div><h2 class="reveal-title-v10"><span class="reveal-title-lead">¡CHICHI, NOS VAMOS A</span><span class="reveal-title-destination">${esc(f.destination)}!</span></h2><div class="reveal-year-v10">${esc(f.year)}</div><figure class="reveal-hero-v10">${imgMarkup(f.image,'Vista panorámica de Río de Janeiro')}</figure><div class="passport-stamp" aria-label="Detalle del regalo"><div><span>DESTINO</span><strong>${esc(f.destination)}</strong></div><div><span>AÑO</span><strong>${esc(f.year)}</strong></div><div><span>PASAJERA</span><strong>${esc(data.recipient || 'Chichi').toUpperCase()}</strong></div></div><p class="reveal-message-v10">${esc(f.message)}</p><div class="birthday birthday-v10">¡FELIZ CUMPLEAÑOS, ${esc(data.recipient || 'Chichi').toUpperCase()}!</div><button class="pill-btn replay replay-v10" data-go="-1">↺ Volver a vivir nuestra historia</button></article></main>`;}
+  function reveal() {
+    const f=data.finale;
+    const confetti=motionOK?`<div class="confetti confetti-v10" aria-hidden="true">${Array.from({length:24},(_,n)=>`<i style="--left:${(n*41.37)%100}%;--col:${['#f5cd83','#fff7e4','#f3a17c','#6fd3bf'][n%4]};--dur:${5+(n%5)}s;--delay:${2.5+(n%8)*0.08}s;--rot:${n*19}deg"></i>`).join('')}</div>`:'';
+    return `<main class="view reveal reveal-v10 reveal-v11">${confetti}
+      <article class="reveal-card reveal-card-v10 reveal-card-v11">
+        <div class="reveal-kicker eyebrow">EL PRÓXIMO CAPÍTULO YA TIENE DESTINO</div>
+        <div class="reveal-lead-v11">CHICHI, NOS VAMOS A...</div>
+        <h2 class="reveal-title-v11"><span class="rio-v11">${esc(f.destination)}</span><span class="ilha-v11">+ ${esc(f.secondDestination)}</span></h2>
+        <div class="reveal-year-v10 reveal-year-v11">${esc(f.year)}</div>
+        <div class="double-destination" aria-label="Los destinos del regalo">
+          <div class="destination-stage">
+            <figure class="destination-image rio-picture destination-image-main">${imgMarkup(f.image,'Cristo Redentor con las montañas de Río de Janeiro al fondo')}<figcaption>RÍO DE JANEIRO</figcaption></figure>
+            <figure class="destination-postcard brasil-postcard"><img src="${photoSrc(f.secondImage)}" alt="Bandera de Brasil ondeando sobre un cielo azul" decoding="async" loading="eager"><figcaption>BRASIL 2027</figcaption></figure>
+          </div>
+        </div>
+        <p class="reveal-message-v10 reveal-message-v11">${esc(f.message)}</p>
+        <p class="reveal-closing-v11">${esc(f.closing)}</p>
+        <div class="birthday birthday-v10">¡FELIZ CUMPLEAÑOS, ${esc(data.recipient).toUpperCase()}!</div>
+        <button class="pill-btn replay replay-v10" data-go="-1">↺ Volver a vivir nuestra historia</button>
+      </article>
+    </main>`;
+  }
   function render() {app.innerHTML=position===-1?intro():position<chapters.length?trip(chapters[position],position):position===specialIndex?specialTrip():position===teaserIndex?teaser():reveal();document.title=position===revealIndex?'¡Feliz cumpleaños, Chichi!':'Nuestra historia · Para Chichi';if(position>=0&&position<chapters.length)syncCoverFrames(app);}
   app.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b){setStep(Number(b.dataset.go),b.classList.contains('gift-btn'));return;}const p=e.target.closest('[data-photo]');if(p){lightbox.querySelector('img').src=p.dataset.photo;lightbox.querySelector('img').alt=p.dataset.alt;lightbox.hidden=false;lightbox.querySelector('button').focus();}});
   lightbox.querySelector('button').addEventListener('click',()=>lightbox.hidden=true);

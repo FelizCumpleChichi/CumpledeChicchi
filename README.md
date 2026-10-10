@@ -149,3 +149,22 @@ Esta versión ajusta exclusivamente la **fotografía principal** de los diez cap
 ## V10 · Revelación final de Río de Janeiro 2027
 
 La pantalla final del regalo fue rediseñada para convertir la revelación de **Río de Janeiro 2027** en el momento más impactante de la experiencia. Se reemplazó el bloque con emojis por una fotografía real de Río integrada como archivo local en `assets/rio-2027/rio-de-janeiro.jpg`, se sumó una secuencia automática de aparición del destino y del año, un confeti moderado y un sello decorativo estilo pasaporte con el detalle del regalo.
+
+
+## V11 · Nuestra historia juntos
+
+Se renovaron los textos de bienvenida, Mar del Plata 2024, Mar del Plata III, el cierre del Gran Viaje 2026 y la expectativa final. La revelación ahora incluye **Río de Janeiro + Ilha Grande 2027**, sin cambiar la fotografía de Río ni las portadas históricas.
+
+**Foto pendiente:** `finale.secondImage` en `data.js` queda vacío hasta incorporar una fotografía real de Ilha Grande con licencia verificable. Para agregarla, guardá el archivo en `assets/rio-2027/ilha-grande.jpg` y configurá `secondImage:'assets/rio-2027/ilha-grande.jpg'`. Mientras esté vacío se muestra un espacio tipográfico neutro, no una imagen inventada.
+
+Fuente candidata: Nathan Chor, *Praia de Lopes Mendes, Ilha Grande* (CC BY-SA 3.0), https://commons.wikimedia.org/wiki/File:Praia_de_Lopes_Mendes,_Ilha_Grande.jpg. La imagen aún no forma parte de este ZIP.
+
+
+## V11.2 · Rediseño fotográfico de la revelación final
+
+La pantalla final del regalo ahora utiliza dos fotografías reales provistas por el usuario, integradas como archivos locales dentro de `assets/rio-2027/`: una imagen principal del Cristo Redentor y una imagen secundaria de la bandera de Brasil. Se eliminó el placeholder de Ilha Grande y se reemplazó por una composición editorial más equilibrada, con etiquetas discretas sobre ambas imágenes: `RÍO DE JANEIRO` y `BRASIL 2027`.
+
+
+## V11.3 · Corrección de composición fotográfica final
+
+Se rediseñó exclusivamente el sector fotográfico de la revelación final. La imagen del Cristo Redentor vuelve a ser la protagonista y la bandera de Brasil ahora se presenta como una postal superpuesta dentro del mismo bloque visual, evitando desbordes y scroll horizontal.
